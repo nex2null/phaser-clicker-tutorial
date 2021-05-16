@@ -8,7 +8,7 @@ function createWindow() {
     useContentSize: true,
     autoHideMenuBar: true
   });
-  win.setMenu(null);
+  //win.setMenu(null);
   win.loadFile('dist/index.html');
 }
 

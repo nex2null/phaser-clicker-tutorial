@@ -9,7 +9,7 @@ function createWindow() {
     autoHideMenuBar: true
   });
   //win.setMenu(null);
-  win.loadFile('dist/index.html');
+  win.loadFile('index.html');
 }
 
 app.whenReady().then(createWindow);

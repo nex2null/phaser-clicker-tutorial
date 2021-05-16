@@ -1,39 +1,39 @@
-import Phaser from 'phaser';
-import forestBackImage from './assets/parallax_forest_pack/layers/parallax-forest-back-trees.png';
-import forestLightsImage from './assets/parallax_forest_pack/layers/parallax-forest-lights.png';
-import forestMiddleImage from './assets/parallax_forest_pack/layers/parallax-forest-middle-trees.png';
-import forestFrontImage from './assets/parallax_forest_pack/layers/parallax-forest-front-trees.png';
-import aerocephalImage from './assets/allacrost_enemy_sprites/aerocephal.png';
-import arcanaDrakeImage from './assets/allacrost_enemy_sprites/arcana_drake.png';
-import aurumDrakueliImage from './assets/allacrost_enemy_sprites/aurum-drakueli.png';
-import batImage from './assets/allacrost_enemy_sprites/bat.png';
-import daemarboraImage from './assets/allacrost_enemy_sprites/daemarbora.png';
-import deceleonImage from './assets/allacrost_enemy_sprites/deceleon.png';
-import demonicEssenceImage from './assets/allacrost_enemy_sprites/demonic_essence.png';
-import duneCrawlerImage from './assets/allacrost_enemy_sprites/dune_crawler.png';
-import greenSlimeImage from './assets/allacrost_enemy_sprites/green_slime.png';
-import nagarudaImage from './assets/allacrost_enemy_sprites/nagaruda.png';
-import ratImage from './assets/allacrost_enemy_sprites/rat.png';
-import scorpionImage from './assets/allacrost_enemy_sprites/scorpion.png';
-import skeletonImage from './assets/allacrost_enemy_sprites/skeleton.png';
-import snakeImage from './assets/allacrost_enemy_sprites/snake.png';
-import spiderImage from './assets/allacrost_enemy_sprites/spider.png';
-import stygianLizardImage from './assets/allacrost_enemy_sprites/stygian_lizard.png';
+import 'Phaser';
+import forestBackImage from '../assets/parallax_forest_pack/layers/parallax-forest-back-trees.png';
+import forestLightsImage from '../assets/parallax_forest_pack/layers/parallax-forest-lights.png';
+import forestMiddleImage from '../assets/parallax_forest_pack/layers/parallax-forest-middle-trees.png';
+import forestFrontImage from '../assets/parallax_forest_pack/layers/parallax-forest-front-trees.png';
+import aerocephalImage from '../assets/allacrost_enemy_sprites/aerocephal.png';
+import arcanaDrakeImage from '../assets/allacrost_enemy_sprites/arcana_drake.png';
+import aurumDrakueliImage from '../assets/allacrost_enemy_sprites/aurum-drakueli.png';
+import batImage from '../assets/allacrost_enemy_sprites/bat.png';
+import daemarboraImage from '../assets/allacrost_enemy_sprites/daemarbora.png';
+import deceleonImage from '../assets/allacrost_enemy_sprites/deceleon.png';
+import demonicEssenceImage from '../assets/allacrost_enemy_sprites/demonic_essence.png';
+import duneCrawlerImage from '../assets/allacrost_enemy_sprites/dune_crawler.png';
+import greenSlimeImage from '../assets/allacrost_enemy_sprites/green_slime.png';
+import nagarudaImage from '../assets/allacrost_enemy_sprites/nagaruda.png';
+import ratImage from '../assets/allacrost_enemy_sprites/rat.png';
+import scorpionImage from '../assets/allacrost_enemy_sprites/scorpion.png';
+import skeletonImage from '../assets/allacrost_enemy_sprites/skeleton.png';
+import snakeImage from '../assets/allacrost_enemy_sprites/snake.png';
+import spiderImage from '../assets/allacrost_enemy_sprites/spider.png';
+import stygianLizardImage from '../assets/allacrost_enemy_sprites/stygian_lizard.png';
 
-class PlayScene extends Phaser.Scene {
+export class MainScene extends Phaser.Scene {
 
   // Properties
-  monsterData;
-  monsterText;
-  currentMonster;
-  monsters;
+  monsterData: Array<any>;
+  monsterText: Phaser.GameObjects.GameObject;
+  currentMonster: Phaser.GameObjects.Sprite;
+  monsters: Phaser.GameObjects.Group;
 
   //
   // Constructor
   //
   constructor() {
 
-    super();
+    super({ key: 'MainScene' });
 
     this.monsterData = [
       { name: 'Aerocephal', image: 'aerocephal' },
@@ -58,7 +58,7 @@ class PlayScene extends Phaser.Scene {
   //
   // Handle scene preload
   //
-  preload() {
+  preload(): void {
     this.load.image('forest-back', forestBackImage);
     this.load.image('forest-lights', forestLightsImage);
     this.load.image('forest-middle', forestMiddleImage);
@@ -102,7 +102,7 @@ class PlayScene extends Phaser.Scene {
     this.monsterData.forEach(data => {
 
       // Create the monster
-      var monster = this.add.sprite(1000, 300, data.image);
+      var monster: any = this.add.sprite(1000, 300, data.image);
       monster.details = data;
       this.monsters.add(monster);
 
@@ -134,10 +134,11 @@ class PlayScene extends Phaser.Scene {
 
     // Set the monster text
     var currentMonsterBounds = this.currentMonster.getBounds();
+    var currentMonsterText = (this.currentMonster as any).details.name;
     this.monsterText = this.add.text(
       currentMonsterBounds.x,
       currentMonsterBounds.y + currentMonsterBounds.height + 20,
-      this.currentMonster.details.name);
+      currentMonsterText);
   }
 
   //
@@ -147,13 +148,3 @@ class PlayScene extends Phaser.Scene {
     this.setRandomMonster();
   }
 }
-
-const config = {
-  type: Phaser.AUTO,
-  parent: 'clicker-tutorial',
-  width: 800,
-  height: 600,
-  scene: PlayScene
-};
-
-const game = new Phaser.Game(config);

@@ -20,19 +20,25 @@ import snakeImage from '../assets/allacrost_enemy_sprites/snake.png';
 import spiderImage from '../assets/allacrost_enemy_sprites/spider.png';
 import stygianLizardImage from '../assets/allacrost_enemy_sprites/stygian_lizard.png';
 import { Monster, monsterInfos } from '../GameObjects/Monster';
+import { MonsterInfoUi } from '../GameObjects/MonsterInfoUi';
+import { Player } from '../GameObjects/Player';
+import { DamagePool } from '../GameObjects/DamagePool';
 
 export class MainScene extends Phaser.Scene {
 
   // Properties
-  monsterText: Phaser.GameObjects.GameObject;
+  monsterInfoUi: MonsterInfoUi;
   currentMonster: Monster;
   monsters: Phaser.GameObjects.Group;
+  player: Player;
+  damagePool: DamagePool;
 
   //
   // Constructor
   //
   constructor() {
     super({ key: 'MainScene' });
+    this.player = new Player(1, 0);
   }
 
   //
@@ -78,6 +84,9 @@ export class MainScene extends Phaser.Scene {
     // Create the monsters group
     this.monsters = this.add.group();
 
+    // Create the damage pool
+    this.damagePool = new DamagePool(this);
+
     // Add all the monster sprites to the group
     monsterInfos.forEach(monsterInfo => {
 
@@ -87,9 +96,19 @@ export class MainScene extends Phaser.Scene {
 
       // Enable input so we can click it
       monster.setInteractive();
-      monster.on('pointerdown', () => { this.monsterClicked(); });
+      monster.on('pointerdown', (pointer: Phaser.Input.Pointer) => this.monsterClicked(pointer));
+      monster.on('killed', () => this.onMonsterKilled());
     });
 
+    // Create the monster info ui
+    this.monsterInfoUi = new MonsterInfoUi(this);
+
+    // Set a random monster
+    this.setRandomMonster();
+  }
+
+  // Handle the monster being killed
+  onMonsterKilled() {
     this.setRandomMonster();
   }
 
@@ -98,14 +117,11 @@ export class MainScene extends Phaser.Scene {
   //
   setRandomMonster() {
 
-    // If there is already a current monster then move it off-screen
+    // If there is already a current monster then restet its health and move it off-screen
     if (this.currentMonster) {
+      this.currentMonster.resetHealth();
       this.currentMonster.setPosition(1000, 300);
     }
-
-    // If there is currently monster text, destroy it
-    if (this.monsterText)
-      this.monsterText.destroy();
 
     // Grab a new monster and move it to center screen
     this.currentMonster = Phaser.Utils.Array.GetRandom(this.monsters.getChildren().filter(child => child.active));
@@ -113,17 +129,28 @@ export class MainScene extends Phaser.Scene {
 
     // Set the monster text
     var currentMonsterBounds = this.currentMonster.getBounds();
-    var currentMonsterText = this.currentMonster.info.name;
-    this.monsterText = this.add.text(
-      currentMonsterBounds.x,
-      currentMonsterBounds.y + currentMonsterBounds.height + 20,
-      currentMonsterText);
+    this.monsterInfoUi.setPosition(currentMonsterBounds.x - 50, currentMonsterBounds.y + currentMonsterBounds.height + 20);
+    this.monsterInfoUi.updateText(this.currentMonster);
   }
 
   //
   // Handle monster click
   //
-  monsterClicked() {
-    this.setRandomMonster();
+  monsterClicked(pointer: Phaser.Input.Pointer) {
+
+    console.log(pointer.x + ' ' + pointer.y);
+
+    // Grab a damage text from the pool to display click damage
+    var damageText = this.damagePool.getFirstDead(false) as Phaser.GameObjects.Text;
+    if (damageText) {
+      damageText.setActive(true);
+      damageText.setVisible(true);
+      damageText.text = this.player.clickDmg.toString();
+      damageText.setPosition(pointer.x, pointer.y);
+      damageText.alpha = 1;
+      (damageText as any).tween.play();
+    }
+    this.currentMonster.damage(this.player.clickDmg);
+    this.monsterInfoUi.updateText(this.currentMonster);
   }
 }

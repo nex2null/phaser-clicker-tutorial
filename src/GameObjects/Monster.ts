@@ -21,6 +21,24 @@ export class Monster extends Phaser.GameObjects.Sprite {
     this.info = info;
     this.currentHealth = info.maxHealth;
   }
+
+  // Damage the monster
+  damage(amount: number) {
+
+    // Reduce the current health by the amount
+    this.currentHealth -= amount;
+    if (this.currentHealth < 0)
+      this.currentHealth = 0;
+
+    // If the health is 0 then emit the killed event
+    if (this.currentHealth == 0)
+      this.emit('killed');
+  }
+
+  // Reset health
+  resetHealth() {
+    this.currentHealth = this.info.maxHealth;
+  }
 }
 
 //

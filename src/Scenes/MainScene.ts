@@ -143,14 +143,37 @@ export class MainScene extends Phaser.Scene {
     // Grab a damage text from the pool to display click damage
     var damageText = this.damagePool.getFirstDead(false) as Phaser.GameObjects.Text;
     if (damageText) {
-      damageText.setActive(true);
-      damageText.setVisible(true);
       damageText.text = this.player.clickDmg.toString();
       damageText.setPosition(pointer.x, pointer.y);
-      damageText.alpha = 1;
-      (damageText as any).tween.play();
+      this.createDamageTween(damageText);
     }
     this.currentMonster.damage(this.player.clickDmg);
     this.monsterInfoUi.updateText(this.currentMonster);
+  }
+
+  //
+  // Create damage tween
+  //
+  createDamageTween(damageText: Phaser.GameObjects.Text) {
+    this.add.tween({
+      targets: damageText,
+      props: {
+        alpha: { value: 0 },
+        x: { value: Phaser.Math.Between(100, 700) },
+        y: { value: 100 }
+      },
+      duration: 1000,
+      ease: 'Cubic.easeOut',
+      onStart: (_, targets) => {
+        targets[0].alpha = 1;
+        targets[0].setActive(true);
+        targets[0].setVisible(true);
+      },
+      onRepeat: () => console.log('repeating'),
+      onComplete: (_, targets) => {
+        targets[0].setVisible(false);
+        targets[0].setActive(false);
+      }
+    });
   }
 }

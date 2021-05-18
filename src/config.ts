@@ -1,4 +1,4 @@
-import { MainScene } from './scenes/main-scene';
+import { MainScene } from './Scenes/MainScene';
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Clicker Tutorial',

@@ -5,7 +5,7 @@ import forestMiddleImage from '../assets/parallax_forest_pack/layers/parallax-fo
 import forestFrontImage from '../assets/parallax_forest_pack/layers/parallax-forest-front-trees.png';
 import aerocephalImage from '../assets/allacrost_enemy_sprites/aerocephal.png';
 import arcanaDrakeImage from '../assets/allacrost_enemy_sprites/arcana_drake.png';
-import aurumDrakueliImage from '../assets/allacrost_enemy_sprites/aurum-drakueli.png';
+import aurumDrakueliImage from '../assets/allacrost_enemy_sprites/aurum_drakueli.png';
 import batImage from '../assets/allacrost_enemy_sprites/bat.png';
 import daemarboraImage from '../assets/allacrost_enemy_sprites/daemarbora.png';
 import deceleonImage from '../assets/allacrost_enemy_sprites/deceleon.png';
@@ -19,40 +19,20 @@ import skeletonImage from '../assets/allacrost_enemy_sprites/skeleton.png';
 import snakeImage from '../assets/allacrost_enemy_sprites/snake.png';
 import spiderImage from '../assets/allacrost_enemy_sprites/spider.png';
 import stygianLizardImage from '../assets/allacrost_enemy_sprites/stygian_lizard.png';
+import { Monster, monsterInfos } from '../GameObjects/Monster';
 
 export class MainScene extends Phaser.Scene {
 
   // Properties
-  monsterData: Array<any>;
   monsterText: Phaser.GameObjects.GameObject;
-  currentMonster: Phaser.GameObjects.Sprite;
+  currentMonster: Monster;
   monsters: Phaser.GameObjects.Group;
 
   //
   // Constructor
   //
   constructor() {
-
     super({ key: 'MainScene' });
-
-    this.monsterData = [
-      { name: 'Aerocephal', image: 'aerocephal' },
-      { name: 'Arcana Drake', image: 'arcana_drake' },
-      { name: 'Aurum Drakueli', image: 'aurum-drakueli' },
-      { name: 'Bat', image: 'bat' },
-      { name: 'Daemarbora', image: 'daemarbora' },
-      { name: 'Deceleon', image: 'deceleon' },
-      { name: 'Demonic Essence', image: 'demonic_essence' },
-      { name: 'Dune Crawler', image: 'dune_crawler' },
-      { name: 'Green Slime', image: 'green_slime' },
-      { name: 'Nagaruda', image: 'nagaruda' },
-      { name: 'Rat', image: 'rat' },
-      { name: 'Scorpion', image: 'scorpion' },
-      { name: 'Skeleton', image: 'skeleton' },
-      { name: 'Snake', image: 'snake' },
-      { name: 'Spider', image: 'spider' },
-      { name: 'Stygian Lizard', image: 'stygian_lizard' }
-    ];
   }
 
   //
@@ -65,7 +45,7 @@ export class MainScene extends Phaser.Scene {
     this.load.image('forest-front', forestFrontImage);
     this.load.image('aerocephal', aerocephalImage);
     this.load.image('arcana_drake', arcanaDrakeImage);
-    this.load.image('aurum-drakueli', aurumDrakueliImage);
+    this.load.image('aurum_drakueli', aurumDrakueliImage);
     this.load.image('bat', batImage);
     this.load.image('daemarbora', daemarboraImage);
     this.load.image('deceleon', deceleonImage);
@@ -99,11 +79,10 @@ export class MainScene extends Phaser.Scene {
     this.monsters = this.add.group();
 
     // Add all the monster sprites to the group
-    this.monsterData.forEach(data => {
+    monsterInfos.forEach(monsterInfo => {
 
       // Create the monster
-      var monster: any = this.add.sprite(1000, 300, data.image);
-      monster.details = data;
+      var monster = new Monster(this, 1000, 300, monsterInfo);
       this.monsters.add(monster);
 
       // Enable input so we can click it
@@ -134,7 +113,7 @@ export class MainScene extends Phaser.Scene {
 
     // Set the monster text
     var currentMonsterBounds = this.currentMonster.getBounds();
-    var currentMonsterText = (this.currentMonster as any).details.name;
+    var currentMonsterText = this.currentMonster.info.name;
     this.monsterText = this.add.text(
       currentMonsterBounds.x,
       currentMonsterBounds.y + currentMonsterBounds.height + 20,
